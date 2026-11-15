@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <!-- 本番の画面（9qu1.com/sanrentan/）の通信の住所（Cloudflare Workers）。手元では使わない（client/src/lib/cfio.ts） -->
+    <meta name="cfio-endpoint" content="https://sanrentan.nakamido.workers.dev" />
+    <title>価値観合わせ！サンレンタン</title>
+    <link rel="icon" href="/sanrentan/favicon.ico" sizes="any">
+    <link rel="icon" href="/sanrentan/icon-192.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/sanrentan/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <script>
+      // 白画面からの自動復帰。
+      // デプロイ直後などに古い index.html から新しくないJSを読みに行くと、JSが読めず
+      // 何も描画されない（白画面）。その場合は1回だけ再読み込みして最新の HTML を取り直す。
+      // 60秒に1回までなので、サーバ側に問題があってもリロードが繰り返されることはない。
+      (function () {
+        var KEY = "sanrentan-auto-reload";
+        function reloadOnce() {
+          try {
+            var last = Number(sessionStorage.getItem(KEY) || 0);
+            if (Date.now() - last < 60000) return;
+            sessionStorage.setItem(KEY, String(Date.now()));
+          } catch (e) {}
+          location.reload();
+        }
+        window.addEventListener("error", function (e) {
+          var t = e.target;
+          if (t && (t.tagName === "SCRIPT" || t.tagName === "LINK")) reloadOnce();
+        }, true);
+        setTimeout(function () {
+          var root = document.getElementById("root");
+          if (root && root.childElementCount === 0) reloadOnce();
+        }, 10000);
+      })();
+    </script>
+    <script type="module" crossorigin src="/sanrentan/assets/index-DF5mQ-oI.js?v=76b4ea1"></script>
+    <link rel="stylesheet" crossorigin href="/sanrentan/assets/index-Ch315j6s.css?v=76b4ea1">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 通信の部品 cfio（socket.io-client の代わり・window.io）。public/ のファイルなので、ビルドで /sanrentan/ が付く -->
+    <script src="/sanrentan/socket.io/socket.io.js?v=76b4ea1"></script>
+  </body>
+</html>
